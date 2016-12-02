@@ -3,7 +3,9 @@ package com.slut.recorder.db.pass.dao;
 import android.text.TextUtils;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.slut.recorder.App;
 import com.slut.recorder.R;
 import com.slut.recorder.db.pass.bean.PassLabel;
@@ -55,6 +57,36 @@ public class PassLabelDao {
         }
     }
 
+    public void updateCollapsedByUUID(String uuid, boolean isCollapsed) {
+        if (TextUtils.isEmpty(uuid)) {
+            return;
+        }
+        UpdateBuilder<PassLabel, Integer> builder = dao.updateBuilder();
+        try {
+            builder.where().eq("uuid", uuid);
+            builder.updateColumnValue("isCollapsed", isCollapsed);
+            builder.update();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isLabelExistsById(String uuid) {
+        boolean flag = false;
+        try {
+            QueryBuilder builder = dao.queryBuilder();
+            builder.where().eq("uuid", uuid);
+            List<PassLabel> passLabelList = builder.query();
+            if (passLabelList != null && passLabelList.size() > 0) {
+                flag = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return flag;
+        }
+    }
+
     public List<PassLabel> queryByPage(long pageNo, long pageSize) {
         List<PassLabel> passLabelList = new ArrayList<>();
         QueryBuilder<PassLabel, Integer> builder = dao.queryBuilder();
@@ -68,6 +100,19 @@ public class PassLabelDao {
             e.printStackTrace();
         } finally {
             return passLabelList;
+        }
+    }
+
+    public void deleteByUUID(String uuid) {
+        if (TextUtils.isEmpty(uuid)) {
+            return;
+        }
+        DeleteBuilder<PassLabel, Integer> builder = dao.deleteBuilder();
+        try {
+            builder.where().eq("uuid", uuid);
+            builder.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

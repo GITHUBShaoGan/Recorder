@@ -1,10 +1,12 @@
-package com.slut.recorder.create.password.type.adapter;
+package com.slut.recorder.create.password.label.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.slut.recorder.App;
@@ -27,6 +29,12 @@ public class PassLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int TYPE_HEADER = 0, TYPE_ITEM = 1, TYPE_FOOT = 2;
     private int footerViewSize = 0;
     private List<PassLabel> passLabelList;
+    private List<Boolean> isCheckedList;
+    private OnCheckChangedCallback onCheckChangedCallback;
+
+    public void setOnCheckChangedCallback(OnCheckChangedCallback onCheckChangedCallback) {
+        this.onCheckChangedCallback = onCheckChangedCallback;
+    }
 
     public List<PassLabel> getPassLabelList() {
         return passLabelList;
@@ -34,6 +42,14 @@ public class PassLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void setPassLabelList(List<PassLabel> passLabelList) {
         this.passLabelList = passLabelList;
+    }
+
+    public List<Boolean> getIsCheckedList() {
+        return isCheckedList;
+    }
+
+    public void setIsCheckedList(List<Boolean> isCheckedList) {
+        this.isCheckedList = isCheckedList;
     }
 
     public void addFooter() {
@@ -61,7 +77,8 @@ public class PassLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+        //显示基本信息
         if (passLabelList != null && !passLabelList.isEmpty() && position < passLabelList.size()) {
             ItemViewHolder viewHolder = (ItemViewHolder) holder;
             PassLabel passLabel = passLabelList.get(position);
@@ -73,6 +90,17 @@ public class PassLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 viewHolder.title.setText(title + "");
                 viewHolder.updateTime.setText(TimeUtils.interval2Str(passLabel.getUpdateStamp(), System.currentTimeMillis()));
             }
+        }
+        //checkbox点击显示与处理
+        if (isCheckedList != null && !isCheckedList.isEmpty() && position < isCheckedList.size()) {
+            ItemViewHolder viewHolder = (ItemViewHolder) holder;
+            viewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    onCheckChangedCallback.onCheckChange(compoundButton, position, b);
+                }
+            });
+            viewHolder.checkBox.setChecked(isCheckedList.get(position));
         }
     }
 
@@ -101,6 +129,8 @@ public class PassLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         TextView title;
         @BindView(R.id.update_time)
         TextView updateTime;
+        @BindView(R.id.checkbox)
+        CheckBox checkBox;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
@@ -112,6 +142,10 @@ public class PassLabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public FooterViewHolder(View itemView) {
             super(itemView);
         }
+    }
+
+    public interface OnCheckChangedCallback {
+        void onCheckChange(View view, int position, boolean b);
     }
 
 }

@@ -11,15 +11,22 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.slut.recorder.App;
 import com.slut.recorder.R;
 import com.slut.recorder.create.password.p.PassNewPresenter;
 import com.slut.recorder.create.password.p.PassNewPresenterImpl;
-import com.slut.recorder.create.password.type.v.PassLabelNewActivity;
+import com.slut.recorder.create.password.label.v.PassLabelNewActivity;
+import com.slut.recorder.db.pass.bean.PassLabel;
 import com.slut.recorder.db.pass.bean.Password;
 import com.slut.recorder.main.fragment.password.v.PassFragment;
 import com.slut.recorder.utils.ToastUtils;
+
+import org.apmem.tools.layouts.FlowLayout;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,9 +45,12 @@ public class PassNewActivity extends AppCompatActivity implements PassNewView {
     TextInputLayout tilUrl;
     @BindView(R.id.til_remark)
     TextInputLayout tilRemark;
+    @BindView(R.id.flowLayout)
+    FlowLayout flowLayout;
 
     private PassNewPresenter presenter;
     private static final int REQUEST_CHOOSE_TYPE = 1000;
+    private ArrayList<PassLabel> passLabelArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +67,8 @@ public class PassNewActivity extends AppCompatActivity implements PassNewView {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         presenter = new PassNewPresenterImpl(this);
+
+        passLabelArrayList = new ArrayList<>();
     }
 
     private void initListener() {
@@ -78,7 +90,7 @@ public class PassNewActivity extends AppCompatActivity implements PassNewView {
         String url = tilUrl.getEditText().getText().toString().trim();
         String remark = tilRemark.getEditText().getText().toString().trim();
 
-        presenter.newPassword(title, account, password, url, remark);
+        presenter.newPassword(title, account, password, url, remark, passLabelArrayList);
     }
 
     @Override
@@ -94,8 +106,7 @@ public class PassNewActivity extends AppCompatActivity implements PassNewView {
     public void onNewPassSuccess(Password password) {
         //如果创建密码成功，则退出本activity
         ToastUtils.showShort(R.string.toast_new_pass_success);
-        //更新首页记录
-        PassFragment.getInstances().insertSingle(password);
+        PassFragment.getInstances().onRefresh();
         finish();
     }
 
@@ -137,9 +148,38 @@ public class PassNewActivity extends AppCompatActivity implements PassNewView {
         switch (item.getItemId()) {
             case R.id.label:
                 Intent openPassTypeNew = new Intent(this, PassLabelNewActivity.class);
+                openPassTypeNew.putParcelableArrayListExtra(PassLabelNewActivity.EXTRA_PASS_LABEL, passLabelArrayList);
                 startActivityForResult(openPassTypeNew, REQUEST_CHOOSE_TYPE);
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CHOOSE_TYPE:
+                    if (data != null) {
+                        passLabelArrayList = data.getParcelableArrayListExtra(PassLabelNewActivity.EXTRA_PASS_LABEL);
+                        flowLayout.removeAllViews();
+                        if (passLabelArrayList != null) {
+                            for (PassLabel passLabel : passLabelArrayList) {
+                                TextView textView = new TextView(this);
+                                FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                layoutParams.setMargins(4, 4, 4, 4);
+                                textView.setLayoutParams(layoutParams);
+                                textView.setPadding(8, 4, 8, 4);
+                                textView.setText(passLabel.getName());
+                                textView.setBackgroundResource(R.drawable.pass_label);
+                                textView.setTextColor(getResources().getColor(R.color.pass_label));
+                                flowLayout.addView(textView);
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

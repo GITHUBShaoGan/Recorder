@@ -1,5 +1,6 @@
-package com.slut.recorder.create.password.type.v;
+package com.slut.recorder.create.password.label.v;
 
+import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -9,14 +10,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
 
 import com.slut.recorder.R;
-import com.slut.recorder.create.password.type.adapter.PassLabelAdapter;
-import com.slut.recorder.create.password.type.p.PassLabelPresenter;
-import com.slut.recorder.create.password.type.p.PassLabelPresenterImpl;
+import com.slut.recorder.create.password.label.adapter.PassLabelAdapter;
+import com.slut.recorder.create.password.label.p.PassLabelPresenter;
+import com.slut.recorder.create.password.label.p.PassLabelPresenterImpl;
 import com.slut.recorder.db.pass.bean.PassLabel;
 import com.slut.recorder.utils.ToastUtils;
 
@@ -27,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PassLabelNewActivity extends AppCompatActivity implements PassLabelView, SwipeRefreshLayout.OnRefreshListener {
+public class PassLabelNewActivity extends AppCompatActivity implements PassLabelView, SwipeRefreshLayout.OnRefreshListener, PassLabelAdapter.OnCheckChangedCallback {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -44,6 +46,7 @@ public class PassLabelNewActivity extends AppCompatActivity implements PassLabel
     private PassLabelAdapter adapter;
 
     private List<PassLabel> passLabelList;
+    private List<Boolean> isCheckedList;
 
     private PassLabelPresenter presenter;
 
@@ -51,6 +54,10 @@ public class PassLabelNewActivity extends AppCompatActivity implements PassLabel
     private static final int PAGE_SIZE = 10;
 
     private int lastVisibleItem;
+
+
+    private ArrayList<PassLabel> passLabelArrayList;
+    public static final String EXTRA_PASS_LABEL = "labels";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +72,22 @@ public class PassLabelNewActivity extends AppCompatActivity implements PassLabel
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Intent intent = getIntent();
+        if (intent != null) {
+            passLabelArrayList = intent.getParcelableArrayListExtra(EXTRA_PASS_LABEL);
+        } else {
+            passLabelArrayList = new ArrayList<>();
+        }
+
         presenter = new PassLabelPresenterImpl(this);
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new PassLabelAdapter();
+        adapter.setOnCheckChangedCallback(this);
         recyclerView.setAdapter(adapter);
         passLabelList = new ArrayList<>();
+        isCheckedList = new ArrayList<>();
 
         refreshLayout.post(new Runnable() {
             @Override
@@ -93,6 +109,11 @@ public class PassLabelNewActivity extends AppCompatActivity implements PassLabel
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = getIntent();
+                if (intent != null) {
+                    intent.putParcelableArrayListExtra(EXTRA_PASS_LABEL, passLabelArrayList);
+                    setResult(RESULT_OK, intent);
+                }
                 finish();
             }
         });
@@ -126,7 +147,7 @@ public class PassLabelNewActivity extends AppCompatActivity implements PassLabel
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                     int totalItemCount = layoutManager.getItemCount();
                     if (lastVisibleItem + 1 == totalItemCount) {
-                        presenter.queryLabel(pageNo, PAGE_SIZE);
+                        presenter.queryLabel(pageNo, PAGE_SIZE, passLabelArrayList);
                     }
                 }
             }
@@ -141,8 +162,11 @@ public class PassLabelNewActivity extends AppCompatActivity implements PassLabel
 
     @Override
     public void onLabelAddSuccess(PassLabel passLabel) {
+        //用户新建的肯定是想直接加进去的
+        passLabelArrayList.add(passLabel);
         pageNo = 0;
         passLabelList.clear();
+        isCheckedList.clear();
         refreshLayout.setRefreshing(true);
         onRefresh();
         //清空输入框
@@ -155,9 +179,11 @@ public class PassLabelNewActivity extends AppCompatActivity implements PassLabel
     }
 
     @Override
-    public void onLabelQuerySuccess(List<PassLabel> passLabelList) {
+    public void onLabelQuerySuccess(List<PassLabel> passLabelList, List<Boolean> isCheckList) {
+        this.isCheckedList.addAll(isCheckList);
         this.passLabelList.addAll(passLabelList);
         adapter.setPassLabelList(this.passLabelList);
+        adapter.setIsCheckedList(this.isCheckedList);
         adapter.notifyDataSetChanged();
 
         pageNo++;
@@ -165,9 +191,11 @@ public class PassLabelNewActivity extends AppCompatActivity implements PassLabel
     }
 
     @Override
-    public void onLabelQueryFinish(List<PassLabel> passLabelList) {
+    public void onLabelQueryFinish(List<PassLabel> passLabelList, List<Boolean> isCheckList) {
+        this.isCheckedList.addAll(isCheckList);
         this.passLabelList.addAll(passLabelList);
         adapter.setPassLabelList(this.passLabelList);
+        adapter.setIsCheckedList(this.isCheckedList);
         adapter.notifyDataSetChanged();
 
         //加载完所有数据
@@ -186,6 +214,52 @@ public class PassLabelNewActivity extends AppCompatActivity implements PassLabel
         adapter.removeFooter();
         pageNo = 1;
         this.passLabelList.clear();
-        presenter.queryLabel(pageNo, PAGE_SIZE);
+        this.isCheckedList.clear();
+        presenter.queryLabel(pageNo, PAGE_SIZE, passLabelArrayList);
+    }
+
+    @Override
+    public void onCheckChange(View view, int position, boolean b) {
+        isCheckedList.set(position, b);
+        PassLabel currentLabel = this.passLabelList.get(position);
+        if (currentLabel != null) {
+            if (b) {
+                //添加
+                boolean flag = false;
+                for (PassLabel passLabel : passLabelArrayList) {
+                    if (passLabel.getUuid().equals(currentLabel.getUuid())) {
+                        //如果id一样表示已经存在,无需重复添加
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    passLabelArrayList.add(this.passLabelList.get(position));
+                }
+            } else {
+                //移除
+                for (PassLabel passLabel : passLabelArrayList) {
+                    if (passLabel.getUuid().equals(currentLabel.getUuid())) {
+                        //如果id一样则删除
+                        passLabelArrayList.remove(passLabel);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //返回数据
+            Intent intent = getIntent();
+            if (intent != null) {
+                intent.putParcelableArrayListExtra(EXTRA_PASS_LABEL, passLabelArrayList);
+                setResult(RESULT_OK, intent);
+            }
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

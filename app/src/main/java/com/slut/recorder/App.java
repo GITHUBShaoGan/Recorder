@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.slut.recorder.db.DBHelper;
 import com.slut.recorder.db.pass.dao.PassConfigDao;
 import com.slut.recorder.db.pass.dao.PassDao;
+import com.slut.recorder.db.pass.dao.PassLabelBindDao;
 import com.slut.recorder.db.pass.dao.PassLabelDao;
 import com.slut.recorder.utils.FileUtils;
 
@@ -130,6 +131,7 @@ public class App extends Application {
         PassConfigDao.getInstances().initDao();
         PassDao.getInstances().initDao();
         PassLabelDao.getInstances().initDao();
+        PassLabelBindDao.getInstances().initDao();
     }
 
     public static boolean isIsLockPassFunction() {

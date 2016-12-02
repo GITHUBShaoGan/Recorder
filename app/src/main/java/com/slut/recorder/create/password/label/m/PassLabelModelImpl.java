@@ -1,4 +1,4 @@
-package com.slut.recorder.create.password.type.m;
+package com.slut.recorder.create.password.label.m;
 
 import android.text.TextUtils;
 
@@ -7,6 +7,7 @@ import com.slut.recorder.db.pass.bean.PassLabel;
 import com.slut.recorder.db.pass.dao.PassLabelDao;
 import com.slut.recorder.utils.ResUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class PassLabelModelImpl implements PassLabelModel {
         }
         String uuid = UUID.randomUUID().toString();
         long stamp = System.currentTimeMillis();
-        PassLabel passLabel = new PassLabel(uuid, title, stamp, stamp);
+        PassLabel passLabel = new PassLabel(uuid, title,true, stamp, stamp);
         boolean flag = PassLabelDao.getInstances().insertSingle(passLabel);
         if (flag) {
             onLabelAddListener.onLabelAddSuccess(passLabel);
@@ -38,7 +39,7 @@ public class PassLabelModelImpl implements PassLabelModel {
     }
 
     @Override
-    public void queryLabel(long pageNo, long pageSize, OnLabelQueryListener onLabelQueryListener) {
+    public void queryLabel(long pageNo, long pageSize, ArrayList<PassLabel> passLabelArrayList, OnLabelQueryListener onLabelQueryListener) {
         if (pageNo < 1) {
             onLabelQueryListener.onLabelQueryError(ResUtils.getString(R.string.error_home_pass_invalid_pageno));
             return;
@@ -53,9 +54,35 @@ public class PassLabelModelImpl implements PassLabelModel {
             return;
         } else {
             if (passLabelList.size() < pageSize) {
-                onLabelQueryListener.onLabelQueryFinish(passLabelList);
+                List<Boolean> isCheckedList = new ArrayList<>();
+                if (passLabelArrayList != null) {
+                    for (PassLabel passLabel : passLabelList) {
+                        boolean flag = false;
+                        for (PassLabel passLabel1 : passLabelArrayList) {
+                            if (passLabel.getUuid().equals(passLabel1.getUuid())) {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        isCheckedList.add(flag);
+                    }
+                }
+                onLabelQueryListener.onLabelQueryFinish(passLabelList, isCheckedList);
             } else {
-                onLabelQueryListener.onLabelQuerySuccess(passLabelList);
+                List<Boolean> isCheckedList = new ArrayList<>();
+                if (passLabelArrayList != null) {
+                    for (PassLabel passLabel : passLabelList) {
+                        boolean flag = false;
+                        for (PassLabel passLabel1 : passLabelArrayList) {
+                            if (passLabel.getUuid().equals(passLabel1.getUuid())) {
+                                flag = true;
+                                break;
+                            }
+                        }
+                        isCheckedList.add(flag);
+                    }
+                }
+                onLabelQueryListener.onLabelQuerySuccess(passLabelList, isCheckedList);
             }
         }
     }

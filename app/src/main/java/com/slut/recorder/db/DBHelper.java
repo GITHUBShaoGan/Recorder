@@ -10,6 +10,7 @@ import com.j256.ormlite.table.TableUtils;
 import com.slut.recorder.App;
 import com.slut.recorder.db.pass.bean.PassConfig;
 import com.slut.recorder.db.pass.bean.PassLabel;
+import com.slut.recorder.db.pass.bean.PassLabelBind;
 import com.slut.recorder.db.pass.bean.Password;
 
 import java.sql.SQLException;
@@ -46,6 +47,7 @@ public class DBHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, PassConfig.class);
             TableUtils.createTable(connectionSource, PassLabel.class);
             TableUtils.createTable(connectionSource, Password.class);
+            TableUtils.createTable(connectionSource, PassLabelBind.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }

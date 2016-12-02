@@ -1,4 +1,4 @@
-package com.slut.recorder.create.password.type.v;
+package com.slut.recorder.create.password.label.v;
 
 import com.slut.recorder.db.pass.bean.PassLabel;
 
@@ -14,9 +14,9 @@ public interface PassLabelView {
 
     void onLabelAddError(String msg);
 
-    void onLabelQuerySuccess(List<PassLabel> passLabelList);
+    void onLabelQuerySuccess(List<PassLabel> passLabelList, List<Boolean> isCheckList);
 
-    void onLabelQueryFinish(List<PassLabel> passLabelList);
+    void onLabelQueryFinish(List<PassLabel> passLabelList, List<Boolean> isCheckList);
 
     void onLabelQueryError(String msg);
 

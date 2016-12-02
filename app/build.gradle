@@ -40,4 +40,5 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:5.0'
     compile 'com.j256.ormlite:ormlite-core:5.0'
     compile 'com.jungly:gridPasswordView:0.3'
+    compile 'org.apmem.tools:layouts:1.10@aar'
 }

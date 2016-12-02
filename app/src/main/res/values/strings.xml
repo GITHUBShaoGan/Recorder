@@ -65,6 +65,8 @@
     <!--PassLabelNewActivity-->
     <string name="hint_passtype_new_title">Label Title</string>
 
+    <string name="title_default_label_none">Passwords without label</string>
+
     <string name="dialog_ok">OK</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>

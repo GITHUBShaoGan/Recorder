@@ -97,15 +97,15 @@ public class MainActivity extends FatherActivity
 
     private void initFragments() {
         fragments = new ArrayList<>();
-        fragments.add(NoteFragment.getInstances());
         fragments.add(PassFragment.getInstances());
+        fragments.add(NoteFragment.getInstances());
         fragments.add(PayFragment.getInstances());
     }
 
     private void initTitles() {
         titles = new ArrayList<>();
-        titles.add(ResUtils.getString(R.string.title_tab_note));
         titles.add(ResUtils.getString(R.string.title_tab_password));
+        titles.add(ResUtils.getString(R.string.title_tab_note));
         titles.add(ResUtils.getString(R.string.title_tab_pay));
     }
 
@@ -140,10 +140,10 @@ public class MainActivity extends FatherActivity
     void onFabClick() {
         switch (viewPager.getCurrentItem()) {
             case 0:
-                startActivity(new Intent(MainActivity.this, NoteCreateActivity.class));
+                presenter.onPassAddClick();
                 break;
             case 1:
-                presenter.onPassAddClick();
+                startActivity(new Intent(MainActivity.this, NoteCreateActivity.class));
                 break;
             case 2:
                 break;
@@ -187,20 +187,6 @@ public class MainActivity extends FatherActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

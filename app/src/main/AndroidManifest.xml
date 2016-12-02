@@ -33,7 +33,7 @@
             android:name=".create.password.master.six.SixNumberActivity"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
         <activity android:name=".unlock.UnlockActivity" />
-        <activity android:name=".create.password.type.v.PassLabelNewActivity"></activity>
+        <activity android:name=".create.password.label.v.PassLabelNewActivity"></activity>
     </application>
 
 </manifest>

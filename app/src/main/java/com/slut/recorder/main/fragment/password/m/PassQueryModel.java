@@ -1,5 +1,6 @@
 package com.slut.recorder.main.fragment.password.m;
 
+import com.slut.recorder.db.pass.bean.PassLabel;
 import com.slut.recorder.db.pass.bean.Password;
 
 import java.util.List;
@@ -12,9 +13,9 @@ public interface PassQueryModel {
 
     interface OnPassQueryListener {
 
-        void onPassQuerySuccess(List<Password> passwordList);
+        void onPassQuerySuccess(List<PassLabel> passLabelList, List<List<Password>> passwordList);
 
-        void onPassQueryFinished(List<Password> passwordList);
+        void onPassQueryFinished(List<PassLabel> passLabelList, List<List<Password>> passwordList);
 
         void onPassQueryError(String msg);
 

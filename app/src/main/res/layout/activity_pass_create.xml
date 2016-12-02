@@ -115,6 +115,11 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <org.apmem.tools.layouts.FlowLayout
+                android:id="@+id/flowLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></org.apmem.tools.layouts.FlowLayout>
+
         </LinearLayout>
     </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

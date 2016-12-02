@@ -19,15 +19,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by 七月在线科技 on 2016/11/30.
+ * Created by 七月在线科技 on 2016/12/2.
  */
 
-public class HomePassAdapter extends RecyclerView.Adapter<HomePassAdapter.ViewHolder> {
+public class HomePassAdapter extends RecyclerView.Adapter<HomePassAdapter.ItemViewHolder> {
 
     private List<Password> passwordList;
-
-    public HomePassAdapter() {
-    }
+    private boolean isCollapsed;
 
     public List<Password> getPasswordList() {
         return passwordList;
@@ -37,45 +35,61 @@ public class HomePassAdapter extends RecyclerView.Adapter<HomePassAdapter.ViewHo
         this.passwordList = passwordList;
     }
 
+    public boolean isCollapsed() {
+        return isCollapsed;
+    }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(App.getContext()).inflate(R.layout.item_home_pass, parent, false);
-        return new ViewHolder(itemView);
+    public void setCollapsed(boolean collapsed) {
+        isCollapsed = collapsed;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(App.getContext()).inflate(R.layout.item_home_pass, parent, false);
+        return new ItemViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(ItemViewHolder holder, int position) {
         if (passwordList != null && !passwordList.isEmpty() && position < passwordList.size()) {
             Password password = passwordList.get(position);
             if (password != null) {
-                String title = RSAUtils.decrypt(password.getTitle());
-                if (!TextUtils.isEmpty(title)) {
-                    holder.avatar.setText(title.charAt(0) + "");
+                String account = RSAUtils.decrypt(password.getAccount());
+                if (TextUtils.isEmpty(account)) {
+                    String title = RSAUtils.decrypt(password.getTitle());
+                    if (TextUtils.isEmpty(title)) {
+                        holder.avatar.setText("X");
+                        holder.account.setText("X");
+                    } else {
+                        holder.avatar.setText(title.charAt(0) + "");
+                        holder.account.setText(title);
+                    }
                 } else {
-                    holder.avatar.setText("X");
+                    holder.avatar.setText(account.charAt(0) + "");
+                    holder.account.setText(account);
                 }
-                holder.title.setText(title + "");
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        if (passwordList != null && !passwordList.isEmpty()) {
-            return passwordList.size();
+        if(!isCollapsed){
+            if (passwordList != null && !passwordList.isEmpty()) {
+                return passwordList.size();
+            }
         }
         return 0;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.avatar)
         CircleTextImageView avatar;
-        @BindView(R.id.title)
-        TextView title;
+        @BindView(R.id.account)
+        TextView account;
 
-        public ViewHolder(View itemView) {
+        public ItemViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

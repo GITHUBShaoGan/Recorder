@@ -1,10 +1,15 @@
 package com.slut.recorder.main.fragment.password.m;
 
 import com.slut.recorder.R;
+import com.slut.recorder.db.pass.bean.PassLabel;
+import com.slut.recorder.db.pass.bean.PassLabelBind;
 import com.slut.recorder.db.pass.bean.Password;
 import com.slut.recorder.db.pass.dao.PassDao;
+import com.slut.recorder.db.pass.dao.PassLabelBindDao;
+import com.slut.recorder.db.pass.dao.PassLabelDao;
 import com.slut.recorder.utils.ResUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,26 +29,43 @@ public class PassQueryModelImpl implements PassQueryModel {
             onPassQueryListener.onPassQueryError(ResUtils.getString(R.string.error_home_pass_invalid_pagesize));
             return;
         }
-        Map<String, Object> map = PassDao.getInstances().queryByPage(pageNumber, pageSize);
-        if (map.containsKey("errno")) {
-            int errno = (int) map.get("errno");
-            switch (errno) {
-                case 0:
-                    //查询成功
-                    List<Password> passwordList = (List<Password>) map.get("data");
-                    if (passwordList.size() < pageSize) {
-                        onPassQueryListener.onPassQueryFinished(passwordList);
-                    } else {
-                        onPassQueryListener.onPassQuerySuccess(passwordList);
+        List<PassLabel> passLabelList = PassLabelDao.getInstances().queryByPage(pageNumber, pageSize);
+        if (passLabelList != null) {
+            if (passLabelList.size() < pageSize) {
+                List<List<Password>> passwordLists = new ArrayList<>();
+                for (PassLabel passLabel : passLabelList) {
+                    List<Password> passwordList = new ArrayList<>();
+                    List<PassLabelBind> passLabelBinds = PassLabelBindDao.getInstances().queryByLabelUUID(passLabel.getUuid());
+                    for (PassLabelBind passLabelBind : passLabelBinds) {
+                        Password password = PassDao.getInstances().querySingleByUUID(passLabelBind.getPassUUID());
+                        if (password != null) {
+                            passwordList.add(password);
+                        }
                     }
-                    break;
-                default:
-                    //查询失败
-                    String msg = map.get("msg") + "";
-                    onPassQueryListener.onPassQueryError(msg);
-                    break;
+                    passwordLists.add(passwordList);
+                }
+                onPassQueryListener.onPassQueryFinished(passLabelList, passwordLists);
+            } else {
+                List<List<Password>> passwordLists = new ArrayList<>();
+                for (PassLabel passLabel : passLabelList) {
+                    List<Password> passwordList = new ArrayList<>();
+                    List<PassLabelBind> passLabelBinds = PassLabelBindDao.getInstances().queryByLabelUUID(passLabel.getUuid());
+                    for (PassLabelBind passLabelBind : passLabelBinds) {
+                        Password password = PassDao.getInstances().querySingleByUUID(passLabelBind.getPassUUID());
+                        if (password != null) {
+                            passwordList.add(password);
+                        }
+                    }
+                    passwordLists.add(passwordList);
+                }
+                onPassQueryListener.onPassQuerySuccess(passLabelList, passwordLists);
             }
+        } else {
+            //查询过程发生错误
+            onPassQueryListener.onPassQueryError(ResUtils.getString(R.string.error_app_inner_error));
         }
+
     }
+
 
 }

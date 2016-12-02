@@ -67,6 +67,20 @@ public class PassDao {
         }
     }
 
+    public Password querySingleByUUID(String uuid) {
+        if (TextUtils.isEmpty(uuid)) {
+            return null;
+        }
+        QueryBuilder<Password, Integer> builder = dao.queryBuilder();
+        try {
+            builder.where().eq("uuid", uuid);
+            return builder.queryForFirst();
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
     public Map<String, Object> queryByPage(long pageNo, long pageSize) {
         Map<String, Object> resultMap = new HashMap<>();
         if (pageNo < 1) {

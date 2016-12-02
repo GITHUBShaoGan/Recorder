@@ -1,7 +1,8 @@
-package com.slut.recorder.create.password.type.m;
+package com.slut.recorder.create.password.label.m;
 
 import com.slut.recorder.db.pass.bean.PassLabel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,14 +23,14 @@ public interface PassLabelModel {
 
     interface OnLabelQueryListener {
 
-        void onLabelQuerySuccess(List<PassLabel> passLabelList);
+        void onLabelQuerySuccess(List<PassLabel> passLabelList, List<Boolean> isCheckList);
 
-        void onLabelQueryFinish(List<PassLabel> passLabelList);
+        void onLabelQueryFinish(List<PassLabel> passLabelList, List<Boolean> isCheckList);
 
         void onLabelQueryError(String msg);
 
     }
 
-    void queryLabel(long pageNo, long pageSize, OnLabelQueryListener onLabelQueryListener);
+    void queryLabel(long pageNo, long pageSize, ArrayList<PassLabel> passLabelArrayList, OnLabelQueryListener onLabelQueryListener);
 
 }

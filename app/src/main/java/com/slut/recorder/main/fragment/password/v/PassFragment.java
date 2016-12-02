@@ -9,10 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 
 import com.slut.recorder.R;
+import com.slut.recorder.db.pass.bean.PassLabel;
 import com.slut.recorder.db.pass.bean.Password;
-import com.slut.recorder.main.fragment.password.adapter.HomePassAdapter;
+import com.slut.recorder.main.fragment.password.adapter.HomeLabelAdapter;
 import com.slut.recorder.main.fragment.password.p.PassQueryPresenter;
 import com.slut.recorder.main.fragment.password.p.PassQueryPresenterImpl;
 import com.slut.recorder.utils.ToastUtils;
@@ -22,6 +24,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.nfc.tech.MifareUltralight.PAGE_SIZE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,16 +38,19 @@ public class PassFragment extends Fragment implements PassView, SwipeRefreshLayo
     RecyclerView recyclerView;
 
     private LinearLayoutManager layoutManager;
-    private HomePassAdapter adapter;
+    private HomeLabelAdapter adapter;
 
     private View rootView;
 
     private static volatile PassFragment instances;
-    private List<Password> passwordList = new ArrayList<>();
+    private List<PassLabel> passLabelList = new ArrayList<>();
+    private List<List<Password>> passwordLists = new ArrayList<>();
     private long pageNo = 1;//页码，从1开始
     private long pageSize = 10;//页面大小
 
     private PassQueryPresenter passQueryPresenter;
+
+    private int lastVisibleItem;
 
     public static PassFragment getInstances() {
         if (instances == null) {
@@ -69,6 +76,7 @@ public class PassFragment extends Fragment implements PassView, SwipeRefreshLayo
         }
         ButterKnife.bind(this, rootView);
         initView();
+        initListener();
         ViewGroup parent = (ViewGroup) rootView.getParent();
         if (parent != null) {
             parent.removeView(rootView);
@@ -79,8 +87,8 @@ public class PassFragment extends Fragment implements PassView, SwipeRefreshLayo
     private void initView() {
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new HomePassAdapter();
-        adapter.setPasswordList(passwordList);
+        adapter = new HomeLabelAdapter(getActivity());
+        adapter.setPassLabelList(passLabelList);
         recyclerView.setAdapter(adapter);
         passQueryPresenter = new PassQueryPresenterImpl(this);
 
@@ -94,18 +102,33 @@ public class PassFragment extends Fragment implements PassView, SwipeRefreshLayo
         refreshLayout.setOnRefreshListener(this);
     }
 
-    public void insertSingle(Password password) {
-        if (password != null && adapter != null) {
-            this.passwordList.add(0, password);
-            adapter.setPasswordList(passwordList);
-            adapter.notifyDataSetChanged();
-        }
+    private void initListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    int totalItemCount = layoutManager.getItemCount();
+                    if (lastVisibleItem + 1 == totalItemCount) {
+                        passQueryPresenter.query(pageNo, pageSize);
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+            }
+        });
     }
 
     @Override
-    public void onPassQuerySuccess(List<Password> passwordList) {
-        this.passwordList.addAll(passwordList);
-        adapter.setPasswordList(this.passwordList);
+    public void onPassQuerySuccess(List<PassLabel> passlabelList, List<List<Password>> passwordList) {
+        this.passLabelList.addAll(passlabelList);
+        this.passwordLists.addAll(passwordList);
+        adapter.setPassLabelList(this.passLabelList);
+        adapter.setPassLists(this.passwordLists);
         adapter.notifyDataSetChanged();
         pageNo++;
 
@@ -113,13 +136,17 @@ public class PassFragment extends Fragment implements PassView, SwipeRefreshLayo
     }
 
     @Override
-    public void onPassQueryFinished(List<Password> passwordList) {
-        this.passwordList.addAll(passwordList);
-        adapter.setPasswordList(this.passwordList);
+    public void onPassQueryFinished(List<PassLabel> passlabelList, List<List<Password>> passwordList) {
+        this.passLabelList.addAll(passlabelList);
+        this.passwordLists.addAll(passwordList);
+        adapter.setPassLabelList(this.passLabelList);
+        adapter.setPassLists(this.passwordLists);
         adapter.notifyDataSetChanged();
         pageNo++;
 
         refreshLayout.setRefreshing(false);
+
+        adapter.addFooter();
     }
 
     @Override
@@ -131,8 +158,10 @@ public class PassFragment extends Fragment implements PassView, SwipeRefreshLayo
 
     @Override
     public void onRefresh() {
+        adapter.removeFooter();
         pageNo = 1;
-        passwordList.clear();
+        passLabelList.clear();
+        passwordLists.clear();
         passQueryPresenter.query(pageNo, pageSize);
     }
 }

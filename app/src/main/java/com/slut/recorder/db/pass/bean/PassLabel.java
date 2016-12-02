@@ -1,5 +1,8 @@
 package com.slut.recorder.db.pass.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -8,12 +11,14 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable
-public class PassLabel {
+public class PassLabel implements Parcelable{
 
     @DatabaseField
-    private String id;
+    private String uuid;
     @DatabaseField
     private String name;
+    @DatabaseField
+    private boolean isCollapsed;
     @DatabaseField
     private long createStamp;
     @DatabaseField
@@ -22,19 +27,54 @@ public class PassLabel {
     public PassLabel() {
     }
 
-    public PassLabel(String id, String name, long createStamp, long updateStamp) {
-        this.id = id;
+    public PassLabel(String uuid, String name, boolean isCollapsed, long createStamp, long updateStamp) {
+        this.uuid = uuid;
         this.name = name;
+        this.isCollapsed = isCollapsed;
         this.createStamp = createStamp;
         this.updateStamp = updateStamp;
     }
 
-    public String getId() {
-        return id;
+    protected PassLabel(Parcel in) {
+        uuid = in.readString();
+        name = in.readString();
+        isCollapsed = in.readByte() != 0;
+        createStamp = in.readLong();
+        updateStamp = in.readLong();
     }
 
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uuid);
+        dest.writeString(name);
+        dest.writeByte((byte) (isCollapsed ? 1 : 0));
+        dest.writeLong(createStamp);
+        dest.writeLong(updateStamp);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<PassLabel> CREATOR = new Creator<PassLabel>() {
+        @Override
+        public PassLabel createFromParcel(Parcel in) {
+            return new PassLabel(in);
+        }
+
+        @Override
+        public PassLabel[] newArray(int size) {
+            return new PassLabel[size];
+        }
+    };
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getName() {
@@ -43,6 +83,14 @@ public class PassLabel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isCollapsed() {
+        return isCollapsed;
+    }
+
+    public void setCollapsed(boolean collapsed) {
+        isCollapsed = collapsed;
     }
 
     public long getCreateStamp() {
@@ -59,5 +107,16 @@ public class PassLabel {
 
     public void setUpdateStamp(long updateStamp) {
         this.updateStamp = updateStamp;
+    }
+
+    @Override
+    public String toString() {
+        return "PassLabel{" +
+                "uuid='" + uuid + '\'' +
+                ", name='" + name + '\'' +
+                ", isCollapsed=" + isCollapsed +
+                ", createStamp=" + createStamp +
+                ", updateStamp=" + updateStamp +
+                '}';
     }
 }

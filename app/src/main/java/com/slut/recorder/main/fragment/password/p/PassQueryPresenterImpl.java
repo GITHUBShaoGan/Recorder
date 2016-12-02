@@ -1,5 +1,6 @@
 package com.slut.recorder.main.fragment.password.p;
 
+import com.slut.recorder.db.pass.bean.PassLabel;
 import com.slut.recorder.db.pass.bean.Password;
 import com.slut.recorder.main.fragment.password.m.PassQueryModel;
 import com.slut.recorder.main.fragment.password.m.PassQueryModelImpl;
@@ -22,13 +23,13 @@ public class PassQueryPresenterImpl implements PassQueryPresenter, PassQueryMode
     }
 
     @Override
-    public void onPassQuerySuccess(List<Password> passwordList) {
-        this.passView.onPassQuerySuccess(passwordList);
+    public void onPassQuerySuccess(List<PassLabel> passlabelList, List<List<Password>> passwordList) {
+        this.passView.onPassQuerySuccess(passlabelList,passwordList);
     }
 
     @Override
-    public void onPassQueryFinished(List<Password> passwordList) {
-        this.passView.onPassQueryFinished(passwordList);
+    public void onPassQueryFinished(List<PassLabel> passlabelList, List<List<Password>> passwordList) {
+        this.passView.onPassQueryFinished(passlabelList,passwordList);
     }
 
     @Override

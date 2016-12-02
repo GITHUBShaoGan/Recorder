@@ -68,8 +68,6 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/btn_master_method_text" />
 
-
-
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

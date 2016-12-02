@@ -1,5 +1,6 @@
 package com.slut.recorder.main.fragment.password.v;
 
+import com.slut.recorder.db.pass.bean.PassLabel;
 import com.slut.recorder.db.pass.bean.Password;
 
 import java.util.List;
@@ -10,9 +11,9 @@ import java.util.List;
 
 public interface PassView {
 
-    void onPassQuerySuccess(List<Password> passwordList);
+    void onPassQuerySuccess(List<PassLabel> labelList, List<List<Password>> passwordList);
 
-    void onPassQueryFinished(List<Password> passwordList);
+    void onPassQueryFinished(List<PassLabel> labelList, List<List<Password>> passwordList);
 
     void onPassQueryError(String msg);
 

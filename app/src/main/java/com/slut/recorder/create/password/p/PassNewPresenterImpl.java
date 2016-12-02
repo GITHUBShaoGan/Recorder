@@ -3,7 +3,10 @@ package com.slut.recorder.create.password.p;
 import com.slut.recorder.create.password.m.PassNewModel;
 import com.slut.recorder.create.password.m.PassNewModelImpl;
 import com.slut.recorder.create.password.v.PassNewView;
+import com.slut.recorder.db.pass.bean.PassLabel;
 import com.slut.recorder.db.pass.bean.Password;
+
+import java.util.ArrayList;
 
 /**
  * Created by 七月在线科技 on 2016/11/28.
@@ -30,7 +33,7 @@ public class PassNewPresenterImpl implements PassNewPresenter, PassNewModel.OnNe
     }
 
     @Override
-    public void newPassword(String title, String account, String password, String url, String remark) {
-        passNewModel.newPassword(title, account, password, url, remark, this);
+    public void newPassword(String title, String account, String password, String url, String remark, ArrayList<PassLabel> passLabelArrayList) {
+        passNewModel.newPassword(title, account, password, url, remark, passLabelArrayList, this);
     }
 }
