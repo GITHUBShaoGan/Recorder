@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="@string/title_note_create"></android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/activity_note_create"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
+        tools:context="com.slut.recorder.create.note.NoteCreateActivity">
+
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@null"
+            android:hint="@string/hint_note_create_title"
+            android:singleLine="true"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <jp.wasabeef.richeditor.RichEditor
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/shadow_bottom" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/colorPrimary"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/white"
+                    android:text="Bold" />
+
+                <TextView
+                    android:id="@+id/italic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/white"
+                    android:text="Italic" />
+
+                <TextView
+                    android:id="@+id/head"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/white"
+                    android:text="Head" />
+
+                <TextView
+                    android:id="@+id/underline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="UnderLine" />
+
+
+                <TextView
+                    android:id="@+id/center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="Center" />
+
+
+                <TextView
+                    android:id="@+id/left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="Left" />
+
+
+                <TextView
+                    android:id="@+id/right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="Right" />
+
+                <TextView
+                    android:id="@+id/indent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="Indent" />
+
+                <TextView
+                    android:id="@+id/outdent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="OutDent" />
+
+                <TextView
+                    android:id="@+id/link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="Link" />
+
+                <TextView
+                    android:id="@+id/numbers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="Numbers" />
+
+                <TextView
+                    android:id="@+id/todo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="Todo" />
+
+                <TextView
+                    android:id="@+id/blockquote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:textColor="@android:color/white"
+                    android:text="Blockquote" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

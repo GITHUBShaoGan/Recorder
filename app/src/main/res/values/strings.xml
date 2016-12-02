@@ -1,0 +1,87 @@
+<resources>
+    <string name="app_name">Recorder</string>
+    <!--FatherActivity-->
+    <string name="toast_exit_app">Please click again to exit app!</string>
+
+    <!-- MainActivity -->
+    <string name="title_tab_note">Note</string>
+    <string name="title_tab_password">Password</string>
+    <string name="title_tab_pay">Pay</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="dialog_main_title_toset_master">Set Master Password?</string>
+    <string name="dialog_main_msg_toset_master">It seem that master password has not been set,set it now?</string>
+
+    <string name="error_password_database_tamper">Database maybe tampered,all data will be cleared</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!--NoteCreateActivity-->
+    <string name="title_note_create">New Note</string>
+    <string name="hint_note_create_content">Content</string>
+    <string name="hint_note_create_title">Title</string>
+
+    <!--PassNewActivity-->
+    <string name="title_pass_create">New Password</string>
+    <string name="hint_pass_create_title">Title</string>
+    <string name="hint_pass_create_account">Account</string>
+    <string name="hint_pass_create_password">Password</string>
+    <string name="hint_pass_create_url">Website Url</string>
+    <string name="hint_pass_create_remark">Remark</string>
+
+    <string name="toast_new_pass_success">Congratulations!!!Password created success.</string>
+
+    <string name="error_pass_new_title_empty">Save failed!!!Title cannot be empty.</string>
+    <string name="error_pass_new_password_empty">Save failed!!!Password cannot be empty.</string>
+    <string name="error_pass_new_insert2db">Insert data to database failed</string>
+
+    <string name="dialog_passnew_title_tips_exit">Save Edits?</string>
+    <string name="dialog_passnew_msg_tips_exit">Your password seems not saved,Do you want to save it?</string>
+
+    <!--PassFragment-->
+    <string name="error_home_pass_invalid_pageno">Invalid pageNo!!!</string>
+    <string name="error_home_pass_invalid_pagesize">Invalid pageSize!!!</string>
+
+    <!-- MasterMethodActivity -->
+    <string name="title_activity_master_method">Choose Type</string>
+    <string name="tv_master_method_tips">Please select the way that you prefer to set the master password!</string>
+    <string name="btn_master_method_six">Six Number</string>
+    <string name="btn_master_method_pattern">Pattern</string>
+    <string name="btn_master_method_fingerprint">Fingerprint</string>
+    <string name="btn_master_method_text">Normal Text</string>
+
+    <!--SixNumberActivity-->
+    <string name="title_activity_six_number">Six Number</string>
+    <string name="tips_six_number_once">Please input your password</string>
+    <string name="tips_six_number_twice">Please input again</string>
+    <string name="tips_six_number_notequal">Passwords not equal</string>
+    <string name="tips_six_number_length_error">The length of password does not match</string>
+
+    <!--UnLockActivity-->
+    <string name="tips_unlock_six_input">Please input your password to unlock</string>
+    <string name="title_activity_unlock">Unlock</string>
+    <string name="toast_unlock_not_equal">Password not equal!!!</string>
+
+    <!--PassLabelNewActivity-->
+    <string name="hint_passtype_new_title">Label Title</string>
+
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_save">Save</string>
+
+    <string name="toast_password_set_success">Set password successfully!!!</string>
+    <string name="toast_unlock_success">Unlock success</string>
+
+    <string name="subtitle_set_master_password">Set Master Password</string>
+
+    <string name="error_insert2db_exception">Unknown exception happened while inserting to database</string>
+    <string name="error_querydb_exception">Query data failed</string>
+    <string name="error_app_inner_error">Sorry,a unknown bug happened</string>
+    <string name="error_time_end_over_start">End time less than start time</string>
+
+    <string name="time_just_now">Just now</string>
+    <string name="time_minute">\tminutes ago</string>
+    <string name="time_hour">\thours ago</string>
+</resources>
